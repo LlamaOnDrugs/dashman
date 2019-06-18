@@ -25,7 +25,7 @@ if [ -t 1 ] || [ ! -z "$FORCE_COLOR" ] ; then
 fi
 
 
-GITHUB_API_DASH="https://api.github.com/repos/dashpay/dash"
+GITHUB_API_DASH="https://api.github.com/repos/QuantisDev/QuantisNet-Core-v2.1.2"
 
 DASHD_RUNNING=0
 DASHD_RESPONDING=0
