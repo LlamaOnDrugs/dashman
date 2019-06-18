@@ -280,8 +280,8 @@ _find_dash_directory() {
     elif [ -e $HOME/.dash/quantisnet-cli-5 ] ; then
         INSTALL_DIR="$HOME/.dash" ;
 
-    elif [ -e $HOME/.quantisnetcore/quantisnet-cli-5 ] ; then
-        INSTALL_DIR="$HOME/.quantisnetcore" ;
+    elif [ -e $HOME/.quantisnetcore5/quantisnet-cli-5 ] ; then
+        INSTALL_DIR="$HOME/.quantisnetcore5" ;
 
         # TODO try to find quantisnet-cli-5 with find
 #    else
@@ -291,11 +291,11 @@ _find_dash_directory() {
     if [ ! -z "$INSTALL_DIR" ]; then
         INSTALL_DIR=$(readlink -f $INSTALL_DIR) 2>/dev/null
         if [ ! -e $INSTALL_DIR ]; then
-            echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
+            echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore5, or \$PATH. -- ${messages["exiting"]}$C_NORM"
             exit 1
         fi
     else
-        echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
+        echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore5, or \$PATH. -- ${messages["exiting"]}$C_NORM"
         exit 1
     fi
 
@@ -670,7 +670,7 @@ update_quantisnetd(){
 
 install_quantisnetd(){
 
-    INSTALL_DIR=$HOME/.quantisnetcore
+    INSTALL_DIR=$HOME/.quantisnetcore5
     QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli-5"
 
     if [ -e $INSTALL_DIR ] ; then
@@ -1278,7 +1278,7 @@ show_message_configure() {
     ok "${messages["to_enable_masternode"]}"
     ok "${messages["uncomment_conf_lines"]}"
     echo
-         pending "    $HOME/.quantisnetcore/dash.conf" ; echo
+         pending "    $HOME/.quantisnetcore5/dash.conf" ; echo
     echo
     echo -e "$C_GREEN install sentinel$C_NORM"
     echo

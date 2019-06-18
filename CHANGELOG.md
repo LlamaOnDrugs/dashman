@@ -42,7 +42,7 @@
 
 0.1.25 -  Sun Mar 26 05:00:38 2017 +0000
 
-    enh - add .quantisnetcore to path in .bash_aliases on install
+    enh - add .quantisnetcore5 to path in .bash_aliases on install
     enh - better block sync check
     enh - better quantisnetd running detection
     enh - better sentinel sync messaging

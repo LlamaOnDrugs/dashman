@@ -21,7 +21,7 @@ git_dir = os.path.abspath(
         os.path.dirname(
             os.path.abspath(__file__)),
         '..'))
-dash_conf_dir = os.path.join(os.getenv('HOME'), '.quantisnetcore')
+dash_conf_dir = os.path.join(os.getenv('HOME'), '.quantisnetcore5')
 QUANTISNET_CLI_path = os.getenv('QUANTISNET_CLI')
 if os.getenv('DASHMAN_PID') is None:
     quit("--> please run using 'dashman vote'")
