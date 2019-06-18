@@ -11,7 +11,7 @@ DASH wallet/daemon management utilities - version 0.1.28
 To install dashman do:
 
     sudo apt-get install python git unzip pv
-    cd ~ && git clone https://github.com/moocowmoo/dashman
+    cd ~ && git clone https://github.com/LlamaOnDrugs/dashman
 
 To update your existing version 12 32/64bit linux dash wallet to the latest
 dashd, do:
