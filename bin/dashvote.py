@@ -178,7 +178,7 @@ def submit_votes(win, ballot, s):
             delays = offsets[:1] + [y-x for x,y in zip(offsets, offsets[1:])]
 
             if background_send:
-                deferred_votes = tempfile.NamedTemporaryFile(prefix=('sending_dashvote_votes-%s=' % batch_timestamp),delete=False)
+                deferred_votes = tempfile.NamedTemporaryFile(prefix=('sending_quantisnetvote_votes-%s=' % batch_timestamp),delete=False)
                 deferred_votes.write("#!/bin/bash\n")
                 deferred_votes.write("set -x\n")
                 os.chmod(deferred_votes.name, 0700)
@@ -322,7 +322,7 @@ def main(screen):
 
     loadwin = curses.newwin(40, 40, 1, 2)
 
-    loadwin.addstr(1, 2, 'dashvote version: ' + version, C_CYAN)
+    loadwin.addstr(1, 2, 'quantisnetvote version: ' + version, C_CYAN)
 
     mncount = int(run_QUANTISNET_CLI_command('masternode count enabled'))
     block_height = int(run_QUANTISNET_CLI_command('getblockcount'))
@@ -478,7 +478,7 @@ def main(screen):
     votewin.keypad(1)
     votewin.border()
 
-    votewin.addstr(1, 2, 'dashvote version: ' + version, C_CYAN)
+    votewin.addstr(1, 2, 'quantisnetvote version: ' + version, C_CYAN)
     votewin.addstr(
         2,
         2,

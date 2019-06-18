@@ -35,9 +35,9 @@
     bugfix - masternodeaddr -> externalip
     bugfix - missing newline in status output
     bugfix - repair state display when PRE_ENABLED
-    bugfix - dashvote - skip stale proposals
+    bugfix - quantisnetvote - skip stale proposals
 
-    style - dashvote - text edits
+    style - quantisnetvote - text edits
 
 
 0.1.25 -  Sun Mar 26 05:00:38 2017 +0000
@@ -46,7 +46,7 @@
     enh - better block sync check
     enh - better quantisnetd running detection
     enh - better sentinel sync messaging
-    enh - dashvote 12.1 compat - background delayed sends
+    enh - quantisnetvote 12.1 compat - background delayed sends
     enh - invoke sudo install on missing dependencies
     enh - move versioned executibles to bin dir - fixes tab completion
     enh - show download progress bar + fancy terminal cleanup
@@ -79,7 +79,7 @@
     config - display bootstrap download size
     config - only require unzip for install (for bootstrap extraction)
     bugfix - fix ok/err display arity
-    bugfix - dashvote - prune completed proposals
+    bugfix - quantisnetvote - prune completed proposals
     bugfix - follow redirects - dashninja 301->www
     bugfix - proper queue position calculation for new nodes
 
@@ -103,7 +103,7 @@
 
     update download url to dash.org
     bugfix - support stale nss lib - downgrade second dashninja attempt
-    dashvote - monkey-patch subprocess.check_output for python <2.7
+    quantisnetvote - monkey-patch subprocess.check_output for python <2.7
 
 0.1.14 -  Sun Nov 1 03:57:56 2015 +0000
 
@@ -113,13 +113,13 @@
     bugfix - ip-lookup failover to http if https fails (older distro cert issue)
     bugfix - support symlink invocation
 
-    dashvote - added git checkout info to version header
-    dashvote - added loading screen, previous vote detection, vim navigation binding
-    dashvote - added vote-counts, turnout percentage
-    dashvote - bugfix - use alias for vote display - added threshold coloring, sort vote display by block start
-    dashvote - align count/percentage columns
-    dashvote - display vote hash during voting
-    dashvote - ignore unmapped keystrokes
+    quantisnetvote - added git checkout info to version header
+    quantisnetvote - added loading screen, previous vote detection, vim navigation binding
+    quantisnetvote - added vote-counts, turnout percentage
+    quantisnetvote - bugfix - use alias for vote display - added threshold coloring, sort vote display by block start
+    quantisnetvote - align count/percentage columns
+    quantisnetvote - display vote hash during voting
+    quantisnetvote - ignore unmapped keystrokes
 
 0.1.13 -  Sun Oct 25 05:49:37 2015 +0000
 
@@ -180,7 +180,7 @@
 
 0.1.9 - Sun Oct 11 04:05:54 2015 +0000
 
-    added dashvote - time-randomized voting, initial curses UI
+    added quantisnetvote - time-randomized voting, initial curses UI
 
     enh - display changelog output on sync update
     enh - remove stale local git tags on sync

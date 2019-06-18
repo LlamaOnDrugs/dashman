@@ -210,7 +210,7 @@ case "$1" in
             ok " ${messages["done"]}"
             echo
             export QUANTISNET_CLI DASHMAN_PID=$$
-            /usr/bin/env python $DASHMAN_GITDIR/bin/dashvote.py
+            /usr/bin/env python $DASHMAN_GITDIR/bin/quantisnetvote.py
             quit 'Exiting.'
             ;;
         status)
