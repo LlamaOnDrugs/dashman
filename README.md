@@ -57,15 +57,15 @@ already present
 
 ## update
 
-where it all began, "dashman update" searches for your quantisnetd/quantisnet-cli
+where it all began, "dashman update" searches for your quantisnetd/quantisnet-cli-5
 executibles in the current directory, ~/.quantisnetcore, and $PATH.  It will prompt
-to install in the first directory found containing both quantisnetd and quantisnet-cli.
+to install in the first directory found containing both quantisnetd and quantisnet-cli-5.
 Multiple wallet directories are not supported. The script assumes the host runs
 a single instance of quantisnetd.
 
 ## restart
 
-"dashman restart [now]" restarts (or starts) quantisnetd. Searches for quantisnet-cli/quantisnetd
+"dashman restart [now]" restarts (or starts) quantisnetd. Searches for quantisnet-cli-5/quantisnetd
 the current directory, ~/.quantisnetcore, and $PATH. It will prompt to restart if not
 given the optional 'now' argument.
 
@@ -86,7 +86,7 @@ given the optional 'now' argument.
 * pv
 * python
 * unzip
-* quantisnetd, quantisnet-cli - version 12 or greater to update
+* quantisnetd, quantisnet-cli-5 - version 12 or greater to update
 
 # Screencaps
 

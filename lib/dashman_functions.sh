@@ -244,17 +244,17 @@ _check_dependencies() {
 
 }
 
-# attempt to locate quantisnet-cli executable.
-# search current dir, ~/.dash, `which quantisnet-cli` ($PATH), finally recursive
+# attempt to locate quantisnet-cli-5 executable.
+# search current dir, ~/.dash, `which quantisnet-cli-5` ($PATH), finally recursive
 _find_dash_directory() {
 
     INSTALL_DIR=''
 
-    # quantisnet-cli in PATH
+    # quantisnet-cli-5 in PATH
 
-    if [ ! -z $(which quantisnet-cli 2>/dev/null) ] ; then
-        INSTALL_DIR=$(readlink -f `which quantisnet-cli`)
-        INSTALL_DIR=${INSTALL_DIR%%/quantisnet-cli*};
+    if [ ! -z $(which quantisnet-cli-5 2>/dev/null) ] ; then
+        INSTALL_DIR=$(readlink -f `which quantisnet-cli-5`)
+        INSTALL_DIR=${INSTALL_DIR%%/quantisnet-cli-5*};
 
 
         #TODO prompt for single-user or multi-user install
@@ -270,22 +270,22 @@ _find_dash_directory() {
             fi
         fi
 
-    # quantisnet-cli not in PATH
+    # quantisnet-cli-5 not in PATH
 
         # check current directory
-    elif [ -e ./quantisnet-cli ] ; then
+    elif [ -e ./quantisnet-cli-5 ] ; then
         INSTALL_DIR='.' ;
 
         # check ~/.dash directory
-    elif [ -e $HOME/.dash/quantisnet-cli ] ; then
+    elif [ -e $HOME/.dash/quantisnet-cli-5 ] ; then
         INSTALL_DIR="$HOME/.dash" ;
 
-    elif [ -e $HOME/.quantisnetcore/quantisnet-cli ] ; then
+    elif [ -e $HOME/.quantisnetcore/quantisnet-cli-5 ] ; then
         INSTALL_DIR="$HOME/.quantisnetcore" ;
 
-        # TODO try to find quantisnet-cli with find
+        # TODO try to find quantisnet-cli-5 with find
 #    else
-#        CANDIDATES=`find $HOME -name quantisnet-cli`
+#        CANDIDATES=`find $HOME -name quantisnet-cli-5`
     fi
 
     if [ ! -z "$INSTALL_DIR" ]; then
@@ -299,9 +299,9 @@ _find_dash_directory() {
         exit 1
     fi
 
-    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli"
+    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli-5"
 
-    # check INSTALL_DIR has quantisnetd and quantisnet-cli
+    # check INSTALL_DIR has quantisnetd and quantisnet-cli-5
     if [ ! -e $INSTALL_DIR/quantisnetd ]; then
         echo -e "${C_RED}${messages["quantisnetd_not_found"]} $INSTALL_DIR -- ${messages["exiting"]}$C_NORM"
         exit 1
@@ -312,7 +312,7 @@ _find_dash_directory() {
         exit 1
     fi
 
-    QUANTISNET_CLI="$CACHE_CMD $INSTALL_DIR/quantisnet-cli"
+    QUANTISNET_CLI="$CACHE_CMD $INSTALL_DIR/quantisnet-cli-5"
 
 }
 
@@ -455,7 +455,7 @@ restart_quantisnetd(){
         die "\n - quantisnetd unexpectedly quit. ${messages["exiting"]}"
     fi
     ok "${messages["done"]}"
-    pending " --> quantisnet-cli getinfo"
+    pending " --> quantisnet-cli-5 getinfo"
     echo
     $QUANTISNET_CLI getinfo
     echo
@@ -562,20 +562,20 @@ update_quantisnetd(){
             quantisnetd-$CURRENT_VERSION \
             dash-qt \
             dash-qt-$CURRENT_VERSION \
-            quantisnet-cli \
-            quantisnet-cli-$CURRENT_VERSION \
+            quantisnet-cli-5 \
+            quantisnet-cli-5-$CURRENT_VERSION \
             dashcore-${CURRENT_VERSION}*.gz*
         ok "${messages["done"]}"
 
         # place it ---------------------------------------------------------------
 
         mv $TARDIR/bin/quantisnetd quantisnetd-$LATEST_VERSION
-        mv $TARDIR/bin/quantisnet-cli quantisnet-cli-$LATEST_VERSION
+        mv $TARDIR/bin/quantisnet-cli-5 quantisnet-cli-5-$LATEST_VERSION
         if [ $PLATFORM != 'armv7l' ];then
             mv $TARDIR/bin/dash-qt dash-qt-$LATEST_VERSION
         fi
         ln -s quantisnetd-$LATEST_VERSION quantisnetd
-        ln -s quantisnet-cli-$LATEST_VERSION quantisnet-cli
+        ln -s quantisnet-cli-5-$LATEST_VERSION quantisnet-cli-5
         if [ $PLATFORM != 'armv7l' ];then
             ln -s dash-qt-$LATEST_VERSION dash-qt
         fi
@@ -583,7 +583,7 @@ update_quantisnetd(){
         # permission it ----------------------------------------------------------
 
         if [ ! -z "$SUDO_USER" ]; then
-            chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
+            chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli-5,quantisnetd,dash-qt,dash*$LATEST_VERSION}
         fi
 
         # purge it ---------------------------------------------------------------
@@ -652,7 +652,7 @@ update_quantisnetd(){
             echo -e ""
             echo -e "${C_GREEN}${messages["installed_in"]} ${INSTALL_DIR}$C_NORM"
             echo -e ""
-            ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
+            ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli-5,quantisnetd,dash-qt,dash*$LATEST_VERSION}
             echo -e ""
 
             quit
@@ -671,7 +671,7 @@ update_quantisnetd(){
 install_quantisnetd(){
 
     INSTALL_DIR=$HOME/.quantisnetcore
-    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli"
+    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli-5"
 
     if [ -e $INSTALL_DIR ] ; then
         die "\n - ${messages["preexisting_dir"]} $INSTALL_DIR ${messages["found"]} ${messages["run_reinstall"]} ${messages["exiting"]}"
@@ -796,19 +796,19 @@ install_quantisnetd(){
 #        quantisnetd-$CURRENT_VERSION \
 #        dash-qt \
 #        dash-qt-$CURRENT_VERSION \
-#        quantisnet-cli \
-#        quantisnet-cli-$CURRENT_VERSION
+#        quantisnet-cli-5 \
+#        quantisnet-cli-5-$CURRENT_VERSION
 #    ok "${messages["done"]}"
 
     # place it ---------------------------------------------------------------
 
     mv $TARDIR/bin/quantisnetd quantisnetd-$LATEST_VERSION
-    mv $TARDIR/bin/quantisnet-cli quantisnet-cli-$LATEST_VERSION
+    mv $TARDIR/bin/quantisnet-cli-5 quantisnet-cli-5-$LATEST_VERSION
     if [ $PLATFORM != 'armv7l' ];then
         mv $TARDIR/bin/dash-qt dash-qt-$LATEST_VERSION
     fi
     ln -s quantisnetd-$LATEST_VERSION quantisnetd
-    ln -s quantisnet-cli-$LATEST_VERSION quantisnet-cli
+    ln -s quantisnet-cli-5-$LATEST_VERSION quantisnet-cli-5
     if [ $PLATFORM != 'armv7l' ];then
         ln -s dash-qt-$LATEST_VERSION dash-qt
     fi
@@ -816,7 +816,7 @@ install_quantisnetd(){
     # permission it ----------------------------------------------------------
 
     if [ ! -z "$SUDO_USER" ]; then
-        chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
+        chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli-5,quantisnetd,dash-qt,dash*$LATEST_VERSION}
     fi
 
     # purge it ---------------------------------------------------------------
@@ -912,13 +912,13 @@ install_quantisnetd(){
         echo -e ""
         echo -e "${C_GREEN}${messages["installed_in"]} ${INSTALL_DIR}$C_NORM"
         echo -e ""
-        ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
+        ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli-5,quantisnetd,dash-qt,dash*$LATEST_VERSION}
         echo -e ""
 
         if [ ! -z "$SUDO_USER" ]; then
             echo -e "${C_GREEN}Symlinked to: ${LINK_TO_SYSTEM_DIR}$C_NORM"
             echo -e ""
-            ls -l --color $LINK_TO_SYSTEM_DIR/{quantisnetd,quantisnet-cli}
+            ls -l --color $LINK_TO_SYSTEM_DIR/{quantisnetd,quantisnet-cli-5}
             echo -e ""
         fi
 

@@ -61,8 +61,8 @@ messages=(
     ["exec_found_in_system_dir"]="znaleziono pliki wykonywalne dash w"
     ["run_dashman_as_root"]=". Uruchom dashman jako root (komenda sudo dashman) aby kontynuować."
     ["quantisnetd_not_found"]="nie znaleziono quantisnetd w"
-    ["dashcli_not_found"]="nie znaleziono quantisnet-cli w"
-    ["dashcli_not_found_in_cwd"]="nie znaleziono quantisnet-cli w obecnym katalogu"
+    ["dashcli_not_found"]="nie znaleziono quantisnet-cli-5 w"
+    ["dashcli_not_found_in_cwd"]="nie znaleziono quantisnet-cli-5 w obecnym katalogu"
 
     ["sync_to_github"]="czy chcesz zsynchronizowac dashmana z githubem?"
 

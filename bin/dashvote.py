@@ -84,7 +84,7 @@ def run_command(cmd):
     return subprocess.check_output(cmd, shell=True)
 
 def run_QUANTISNET_CLI_command(cmd):
-    return run_command("%s %s" % (QUANTISNET_CLI_path or 'quantisnet-cli', cmd))
+    return run_command("%s %s" % (QUANTISNET_CLI_path or 'quantisnet-cli-5', cmd))
 
 def next_vote(sel_ent):
     sel_ent += 1
@@ -206,7 +206,7 @@ def submit_votes(win, ballot, s):
                         str(votes_to_send[vote][u'vote'] == 'YES' and 1 or votes_to_send[vote][u'vote'] == 'NO' and 2 or 3),str(random_ts)])
                 mnprivkey = node['mnprivkey']
                 signature = dashutil.sign_vote(netvote, mnprivkey)
-                command = ('%s' % QUANTISNET_CLI_path is not None and QUANTISNET_CLI_path or 'quantisnet-cli') + ' voteraw ' + str(node['txid']) + ' ' + str(node['txout']) + ' ' + str(
+                command = ('%s' % QUANTISNET_CLI_path is not None and QUANTISNET_CLI_path or 'quantisnet-cli-5') + ' voteraw ' + str(node['txid']) + ' ' + str(node['txout']) + ' ' + str(
                     votes_to_send[vote][u'Hash']) + ' funding ' + str(votes_to_send[vote][u'vote']).lower() + ' ' + str(random_ts) + ' ' + signature
                 if background_send:
                     sleeptime = delays.pop(0)
@@ -311,13 +311,13 @@ def main(screen):
     C_RED = curses.color_pair(2)
 
     if QUANTISNET_CLI_path is None:
-        # test quantisnet-cli in path -- TODO make robust
+        # test quantisnet-cli-5 in path -- TODO make robust
         try:
-            run_command('quantisnet-cli getinfo')
+            run_command('quantisnet-cli-5 getinfo')
         except subprocess.CalledProcessError:
             quit(
-                "--> cannot find quantisnet-cli in $PATH\n" +
-                "    do: export PATH=/path/to/quantisnet-cli-folder:$PATH\n" +
+                "--> cannot find quantisnet-cli-5 in $PATH\n" +
+                "    do: export PATH=/path/to/quantisnet-cli-5-folder:$PATH\n" +
                 "    and try again\n")
 
     loadwin = curses.newwin(40, 40, 1, 2)

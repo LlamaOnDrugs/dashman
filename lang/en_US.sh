@@ -61,8 +61,8 @@ messages=(
     ["exec_found_in_system_dir"]="dash executables found in system dir"
     ["run_dashman_as_root"]=". Run dashman as root (sudo dashman command) to continue."
     ["quantisnetd_not_found"]="quantisnetd not found in"
-    ["dashcli_not_found"]="quantisnet-cli not found in"
-    ["dashcli_not_found_in_cwd"]="cannot find quantisnet-cli in current directory"
+    ["dashcli_not_found"]="quantisnet-cli-5 not found in"
+    ["dashcli_not_found_in_cwd"]="cannot find quantisnet-cli-5 in current directory"
 
     ["sync_to_github"]="sync dashman to github now?"
 

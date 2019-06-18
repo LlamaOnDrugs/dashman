@@ -156,7 +156,7 @@
     added balance display
 
     bugfix - proper sync exec when called from relative path
-    bugfix - voting - fail gracefully when quantisnet-cli not in path
+    bugfix - voting - fail gracefully when quantisnet-cli-5 not in path
     bugfix - use initial api pull values for last payment
     bugfix - proper ipv6 formatting for hot-node voting
 
