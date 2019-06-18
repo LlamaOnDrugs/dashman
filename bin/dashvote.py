@@ -21,8 +21,8 @@ git_dir = os.path.abspath(
         os.path.dirname(
             os.path.abspath(__file__)),
         '..'))
-dash_conf_dir = os.path.join(os.getenv('HOME'), '.dashcore')
-dash_cli_path = os.getenv('DASH_CLI')
+dash_conf_dir = os.path.join(os.getenv('HOME'), '.quantisnetcore')
+QUANTISNET_CLI_path = os.getenv('QUANTISNET_CLI')
 if os.getenv('DASHMAN_PID') is None:
     quit("--> please run using 'dashman vote'")
 
@@ -83,8 +83,8 @@ if "check_output" not in dir( subprocess ):
 def run_command(cmd):
     return subprocess.check_output(cmd, shell=True)
 
-def run_dash_cli_command(cmd):
-    return run_command("%s %s" % (dash_cli_path or 'dash-cli', cmd))
+def run_QUANTISNET_CLI_command(cmd):
+    return run_command("%s %s" % (QUANTISNET_CLI_path or 'quantisnet-cli', cmd))
 
 def next_vote(sel_ent):
     sel_ent += 1
@@ -206,7 +206,7 @@ def submit_votes(win, ballot, s):
                         str(votes_to_send[vote][u'vote'] == 'YES' and 1 or votes_to_send[vote][u'vote'] == 'NO' and 2 or 3),str(random_ts)])
                 mnprivkey = node['mnprivkey']
                 signature = dashutil.sign_vote(netvote, mnprivkey)
-                command = ('%s' % dash_cli_path is not None and dash_cli_path or 'dash-cli') + ' voteraw ' + str(node['txid']) + ' ' + str(node['txout']) + ' ' + str(
+                command = ('%s' % QUANTISNET_CLI_path is not None and QUANTISNET_CLI_path or 'quantisnet-cli') + ' voteraw ' + str(node['txid']) + ' ' + str(node['txout']) + ' ' + str(
                     votes_to_send[vote][u'Hash']) + ' funding ' + str(votes_to_send[vote][u'vote']).lower() + ' ' + str(random_ts) + ' ' + signature
                 if background_send:
                     sleeptime = delays.pop(0)
@@ -310,22 +310,22 @@ def main(screen):
     C_GREEN = curses.color_pair(3)
     C_RED = curses.color_pair(2)
 
-    if dash_cli_path is None:
-        # test dash-cli in path -- TODO make robust
+    if QUANTISNET_CLI_path is None:
+        # test quantisnet-cli in path -- TODO make robust
         try:
-            run_command('dash-cli getinfo')
+            run_command('quantisnet-cli getinfo')
         except subprocess.CalledProcessError:
             quit(
-                "--> cannot find dash-cli in $PATH\n" +
-                "    do: export PATH=/path/to/dash-cli-folder:$PATH\n" +
+                "--> cannot find quantisnet-cli in $PATH\n" +
+                "    do: export PATH=/path/to/quantisnet-cli-folder:$PATH\n" +
                 "    and try again\n")
 
     loadwin = curses.newwin(40, 40, 1, 2)
 
     loadwin.addstr(1, 2, 'dashvote version: ' + version, C_CYAN)
 
-    mncount = int(run_dash_cli_command('masternode count enabled'))
-    block_height = int(run_dash_cli_command('getblockcount'))
+    mncount = int(run_QUANTISNET_CLI_command('masternode count enabled'))
+    block_height = int(run_QUANTISNET_CLI_command('getblockcount'))
     blocks_to_next_cycle = (16616 - (block_height % 16616))
     next_cycle_epoch = int(int(time.time()) + (157.5 * blocks_to_next_cycle))
     days_to_next_cycle = blocks_to_next_cycle / 576.0
@@ -337,7 +337,7 @@ def main(screen):
     time.sleep(1)
 
     # get ballot
-    ballots = json.loads(run_dash_cli_command('gobject list all'))
+    ballots = json.loads(run_QUANTISNET_CLI_command('gobject list all'))
     ballot = {}
 
     for entry in ballots:
@@ -364,7 +364,7 @@ def main(screen):
             continue
 
         ballots[entry][u'vote'] = 'SKIP'
-        ballots[entry][u'votes'] = json.loads(run_dash_cli_command('gobject getvotes %s' % entry))
+        ballots[entry][u'votes'] = json.loads(run_QUANTISNET_CLI_command('gobject getvotes %s' % entry))
 
         ballot[entry] = ballots[entry]
 

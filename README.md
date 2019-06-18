@@ -14,7 +14,7 @@ To install dashman do:
     cd ~ && git clone https://github.com/LlamaOnDrugs/dashman
 
 To update your existing version 12 32/64bit linux dash wallet to the latest
-dashd, do:
+quantisnetd, do:
 
     dashman/dashman update
 
@@ -30,11 +30,11 @@ To update dashman to the latest version, do:
 
     dashman/dashman sync
 
-To restart (or start) dashd, do:
+To restart (or start) quantisnetd, do:
 
     dashman/dashman restart
 
-To get the current status of dashd, do:
+To get the current status of quantisnetd, do:
 
     dashman/dashman status
 
@@ -47,7 +47,7 @@ To get the current status of dashd, do:
 
 ## install
 
-"dashman install" downloads and initializes a fresh dash install into ~/.dashcore
+"dashman install" downloads and initializes a fresh dash install into ~/.quantisnetcore
 unless already present
 
 ## reinstall
@@ -57,23 +57,23 @@ already present
 
 ## update
 
-where it all began, "dashman update" searches for your dashd/dash-cli
-executibles in the current directory, ~/.dashcore, and $PATH.  It will prompt
-to install in the first directory found containing both dashd and dash-cli.
+where it all began, "dashman update" searches for your quantisnetd/quantisnet-cli
+executibles in the current directory, ~/.quantisnetcore, and $PATH.  It will prompt
+to install in the first directory found containing both quantisnetd and quantisnet-cli.
 Multiple wallet directories are not supported. The script assumes the host runs
-a single instance of dashd.
+a single instance of quantisnetd.
 
 ## restart
 
-"dashman restart [now]" restarts (or starts) dashd. Searches for dash-cli/dashd
-the current directory, ~/.dashcore, and $PATH. It will prompt to restart if not
+"dashman restart [now]" restarts (or starts) quantisnetd. Searches for quantisnet-cli/quantisnetd
+the current directory, ~/.quantisnetcore, and $PATH. It will prompt to restart if not
 given the optional 'now' argument.
 
 <a href="#restart-1">screencap</a>
 
 ## status
 
-"dashman status" interrogates the locally running dashd and displays its status
+"dashman status" interrogates the locally running quantisnetd and displays its status
 
 <a href="#status-1">screencap</a>
 
@@ -86,7 +86,7 @@ given the optional 'now' argument.
 * pv
 * python
 * unzip
-* dashd, dash-cli - version 12 or greater to update
+* quantisnetd, quantisnet-cli - version 12 or greater to update
 
 # Screencaps
 

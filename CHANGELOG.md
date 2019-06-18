@@ -20,7 +20,7 @@
     enh - add highlight color for selection pending and startup states
 
     compat - bootstrap path change
-    compat - update dashd 12.2
+    compat - update quantisnetd 12.2
 
     config - beautify changelog print
     config - colorize compat class commits
@@ -42,9 +42,9 @@
 
 0.1.25 -  Sun Mar 26 05:00:38 2017 +0000
 
-    enh - add .dashcore to path in .bash_aliases on install
+    enh - add .quantisnetcore to path in .bash_aliases on install
     enh - better block sync check
-    enh - better dashd running detection
+    enh - better quantisnetd running detection
     enh - better sentinel sync messaging
     enh - dashvote 12.1 compat - background delayed sends
     enh - invoke sudo install on missing dependencies
@@ -143,7 +143,7 @@
     bugfix - detect netcat -4,-6 switch support before embarking, prompt to install appropriate package
     bugfix - hide stderr output during dependency tests
     bugfix - retry web pulls once on failure - retry public ip lookup on failure
-    bugfix - status - fail gracefully if dashd not running
+    bugfix - status - fail gracefully if quantisnetd not running
     bugfix - vote - dont crash when masternode votes exceeds screen height
     compat - fixes for older oses - stderr and git syntax
 
@@ -156,7 +156,7 @@
     added balance display
 
     bugfix - proper sync exec when called from relative path
-    bugfix - voting - fail gracefully when dash-cli not in path
+    bugfix - voting - fail gracefully when quantisnet-cli not in path
     bugfix - use initial api pull values for last payment
     bugfix - proper ipv6 formatting for hot-node voting
 
@@ -167,7 +167,7 @@
 0.1.10 -  Tue Oct 13 07:18:29 2015 +0000
 
     added ipv6 support - use icanhazip for ipv4/6 polling
-    added dashd uptime calculation
+    added quantisnetd uptime calculation
     added support for hot-node (Internet server) dash.conf voting
     added initial host metrics: uptime/load average
     added dependency check on launch
@@ -245,7 +245,7 @@
         sync
             - sync with github (git fetch/reset)
         restart
-            - restarts (or starts) dashd
+            - restarts (or starts) quantisnetd
 
 
 0.0.8 - Thu Aug 27 07:57:15 2015 +0000

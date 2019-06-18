@@ -72,17 +72,17 @@ case "$1" in
         restart)
             COMMAND=$1
             _find_dash_directory
-            _check_dashd_state
+            _check_quantisnetd_state
             # TODO, show uptime: ps --no-header -o pid,etime $(cat $INSTALL_DIR/dash.pid) | awk '{print $2}'
             case "$2" in
                 now)
-                    restart_dashd
+                    restart_quantisnetd
                     ;;
                 *)
                     echo
-                    pending "restart dashd? "
+                    pending "restart quantisnetd? "
                     confirm "[${C_GREEN}y${C_NORM}/${C_RED}N${C_NORM}] $C_CYAN" && \
-                        restart_dashd
+                        restart_quantisnetd
                     ;;
             esac
             ;;
@@ -92,7 +92,7 @@ case "$1" in
             _check_dashman_updates
             _find_dash_directory
             _get_versions
-            _check_dashd_state
+            _check_quantisnetd_state
             ok " ${messages["done"]}"
             if [ ! -z "$2" ]; then
                 if [ "$2" == '-y' ] || [ "$2" == '-Y' ]; then
@@ -103,7 +103,7 @@ case "$1" in
             if [ ! -z "$ARM" ] && [ $BIGARM -eq 0 ]; then
                 die "$COMMAND not supported yet on this platform."
             fi
-            update_dashd
+            update_quantisnetd
             ;;
         install)
             COMMAND=$1
@@ -121,7 +121,7 @@ case "$1" in
                     install_sentinel
                 elif [ "$APP" == 'unattended' ]; then
                     UNATTENDED=1
-                    install_dashd
+                    install_quantisnetd
                 else
                     echo "don't know how to install: $2"
                 fi
@@ -130,7 +130,7 @@ case "$1" in
                 # dashman
                 # ???
             else
-                install_dashd
+                install_quantisnetd
                 show_message_configure
             fi
             quit
@@ -141,13 +141,13 @@ case "$1" in
             _check_dashman_updates
             _find_dash_directory
             _get_versions
-            _check_dashd_state
+            _check_quantisnetd_state
             REINSTALL=1
             ok " ${messages["done"]}"
             if [ ! -z "$ARM" ] && [ $BIGARM -eq 0 ]; then
                 die "$COMMAND not supported yet on this platform."
             fi
-            update_dashd
+            update_quantisnetd
             ;;
         sync)
             COMMAND=$1
@@ -206,10 +206,10 @@ case "$1" in
             _check_dashman_updates
             _find_dash_directory
             _get_versions
-            _check_dashd_state
+            _check_quantisnetd_state
             ok " ${messages["done"]}"
             echo
-            export DASH_CLI DASHMAN_PID=$$
+            export QUANTISNET_CLI DASHMAN_PID=$$
             /usr/bin/env python $DASHMAN_GITDIR/bin/dashvote.py
             quit 'Exiting.'
             ;;
@@ -219,8 +219,8 @@ case "$1" in
             _check_dashman_updates
             _find_dash_directory
             _get_versions
-            _check_dashd_state
-            get_dashd_status
+            _check_quantisnetd_state
+            get_quantisnetd_status
             get_host_status
             ok " ${messages["done"]}"
             echo

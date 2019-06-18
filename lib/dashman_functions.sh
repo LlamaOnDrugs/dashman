@@ -27,8 +27,8 @@ fi
 
 GITHUB_API_DASH="https://api.github.com/repos/QuantisDev/QuantisNet-Core-v2.1.2"
 
-DASHD_RUNNING=0
-DASHD_RESPONDING=0
+quantisnetd_RUNNING=0
+quantisnetd_RESPONDING=0
 DASHMAN_VERSION=$(cat $DASHMAN_GITDIR/VERSION)
 DASHMAN_CHECKOUT=$(GIT_DIR=$DASHMAN_GITDIR/.git GIT_WORK_TREE=$DASHMAN_GITDIR git describe --dirty | sed -e "s/^.*-\([0-9]\+-g\)/\1/" )
 if [ "$DASHMAN_CHECKOUT" == "v"$DASHMAN_VERSION ]; then
@@ -244,17 +244,17 @@ _check_dependencies() {
 
 }
 
-# attempt to locate dash-cli executable.
-# search current dir, ~/.dash, `which dash-cli` ($PATH), finally recursive
+# attempt to locate quantisnet-cli executable.
+# search current dir, ~/.dash, `which quantisnet-cli` ($PATH), finally recursive
 _find_dash_directory() {
 
     INSTALL_DIR=''
 
-    # dash-cli in PATH
+    # quantisnet-cli in PATH
 
-    if [ ! -z $(which dash-cli 2>/dev/null) ] ; then
-        INSTALL_DIR=$(readlink -f `which dash-cli`)
-        INSTALL_DIR=${INSTALL_DIR%%/dash-cli*};
+    if [ ! -z $(which quantisnet-cli 2>/dev/null) ] ; then
+        INSTALL_DIR=$(readlink -f `which quantisnet-cli`)
+        INSTALL_DIR=${INSTALL_DIR%%/quantisnet-cli*};
 
 
         #TODO prompt for single-user or multi-user install
@@ -270,49 +270,49 @@ _find_dash_directory() {
             fi
         fi
 
-    # dash-cli not in PATH
+    # quantisnet-cli not in PATH
 
         # check current directory
-    elif [ -e ./dash-cli ] ; then
+    elif [ -e ./quantisnet-cli ] ; then
         INSTALL_DIR='.' ;
 
         # check ~/.dash directory
-    elif [ -e $HOME/.dash/dash-cli ] ; then
+    elif [ -e $HOME/.dash/quantisnet-cli ] ; then
         INSTALL_DIR="$HOME/.dash" ;
 
-    elif [ -e $HOME/.dashcore/dash-cli ] ; then
-        INSTALL_DIR="$HOME/.dashcore" ;
+    elif [ -e $HOME/.quantisnetcore/quantisnet-cli ] ; then
+        INSTALL_DIR="$HOME/.quantisnetcore" ;
 
-        # TODO try to find dash-cli with find
+        # TODO try to find quantisnet-cli with find
 #    else
-#        CANDIDATES=`find $HOME -name dash-cli`
+#        CANDIDATES=`find $HOME -name quantisnet-cli`
     fi
 
     if [ ! -z "$INSTALL_DIR" ]; then
         INSTALL_DIR=$(readlink -f $INSTALL_DIR) 2>/dev/null
         if [ ! -e $INSTALL_DIR ]; then
-            echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.dashcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
+            echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
             exit 1
         fi
     else
-        echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.dashcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
+        echo -e "${C_RED}${messages["dashcli_not_found_in_cwd"]}, ~/.quantisnetcore, or \$PATH. -- ${messages["exiting"]}$C_NORM"
         exit 1
     fi
 
-    DASH_CLI="$INSTALL_DIR/dash-cli"
+    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli"
 
-    # check INSTALL_DIR has dashd and dash-cli
-    if [ ! -e $INSTALL_DIR/dashd ]; then
-        echo -e "${C_RED}${messages["dashd_not_found"]} $INSTALL_DIR -- ${messages["exiting"]}$C_NORM"
+    # check INSTALL_DIR has quantisnetd and quantisnet-cli
+    if [ ! -e $INSTALL_DIR/quantisnetd ]; then
+        echo -e "${C_RED}${messages["quantisnetd_not_found"]} $INSTALL_DIR -- ${messages["exiting"]}$C_NORM"
         exit 1
     fi
 
-    if [ ! -e $DASH_CLI ]; then
+    if [ ! -e $QUANTISNET_CLI ]; then
         echo -e "${C_RED}${messages["dashcli_not_found"]} $INSTALL_DIR -- ${messages["exiting"]}$C_NORM"
         exit 1
     fi
 
-    DASH_CLI="$CACHE_CMD $INSTALL_DIR/dash-cli"
+    QUANTISNET_CLI="$CACHE_CMD $INSTALL_DIR/quantisnet-cli"
 
 }
 
@@ -383,8 +383,8 @@ _get_versions() {
         die "\n${messages["err_could_not_get_version"]} -- ${messages["exiting"]}"
     fi
 
-    if [ -z "$DASH_CLI" ]; then DASH_CLI='echo'; fi
-    CURRENT_VERSION=$( $DASH_CLI --version | perl -ne '/v([0-9.]+)/; print $1;' 2>/dev/null ) 2>/dev/null
+    if [ -z "$QUANTISNET_CLI" ]; then QUANTISNET_CLI='echo'; fi
+    CURRENT_VERSION=$( $QUANTISNET_CLI --version | perl -ne '/v([0-9.]+)/; print $1;' 2>/dev/null ) 2>/dev/null
     for url in "${DOWNLOAD_URLS[@]}"
     do
         if [[ $url =~ .*${PLAT}-linux.* ]] ; then
@@ -395,28 +395,28 @@ _get_versions() {
 }
 
 
-_check_dashd_state() {
-    _get_dashd_proc_status
-    DASHD_RUNNING=0
-    DASHD_RESPONDING=0
-    if [ $DASHD_HASPID -gt 0 ] && [ $DASHD_PID -gt 0 ]; then
-        DASHD_RUNNING=1
+_check_quantisnetd_state() {
+    _get_quantisnetd_proc_status
+    quantisnetd_RUNNING=0
+    quantisnetd_RESPONDING=0
+    if [ $quantisnetd_HASPID -gt 0 ] && [ $quantisnetd_PID -gt 0 ]; then
+        quantisnetd_RUNNING=1
     fi
-    $DASH_CLI getinfo >/dev/null 2>&1
+    $QUANTISNET_CLI getinfo >/dev/null 2>&1
     if [ $? -eq 0 ] || [ $? -eq 28 ]; then
-        DASHD_RESPONDING=1
+        quantisnetd_RESPONDING=1
     fi
 }
 
-restart_dashd(){
+restart_quantisnetd(){
 
-    if [ $DASHD_RUNNING == 1 ]; then
-        pending " --> ${messages["stopping"]} dashd. ${messages["please_wait"]}"
-        $DASH_CLI stop 2>&1 >/dev/null
+    if [ $quantisnetd_RUNNING == 1 ]; then
+        pending " --> ${messages["stopping"]} quantisnetd. ${messages["please_wait"]}"
+        $QUANTISNET_CLI stop 2>&1 >/dev/null
         sleep 10
-        killall -9 dashd dash-shutoff 2>/dev/null
+        killall -9 quantisnetd dash-shutoff 2>/dev/null
         ok "${messages["done"]}"
-        DASHD_RUNNING=0
+        quantisnetd_RUNNING=0
     fi
 
     pending " --> ${messages["deleting_cache_files"]}"
@@ -438,32 +438,32 @@ restart_dashd(){
 
     ok "${messages["done"]}"
 
-    pending " --> ${messages["starting_dashd"]}"
-    $INSTALL_DIR/dashd 2>&1 >/dev/null
-    DASHD_RUNNING=1
+    pending " --> ${messages["starting_quantisnetd"]}"
+    $INSTALL_DIR/quantisnetd 2>&1 >/dev/null
+    quantisnetd_RUNNING=1
     ok "${messages["done"]}"
 
-    pending " --> ${messages["waiting_for_dashd_to_respond"]}"
+    pending " --> ${messages["waiting_for_quantisnetd_to_respond"]}"
     echo -en "${C_YELLOW}"
-    DASHD_RESPONDING=0
-    while [ $DASHD_RUNNING == 1 ] && [ $DASHD_RESPONDING == 0 ]; do
+    quantisnetd_RESPONDING=0
+    while [ $quantisnetd_RUNNING == 1 ] && [ $quantisnetd_RESPONDING == 0 ]; do
         echo -n "."
-        _check_dashd_state
+        _check_quantisnetd_state
         sleep 2
     done
-    if [ $DASHD_RUNNING == 0 ]; then
-        die "\n - dashd unexpectedly quit. ${messages["exiting"]}"
+    if [ $quantisnetd_RUNNING == 0 ]; then
+        die "\n - quantisnetd unexpectedly quit. ${messages["exiting"]}"
     fi
     ok "${messages["done"]}"
-    pending " --> dash-cli getinfo"
+    pending " --> quantisnet-cli getinfo"
     echo
-    $DASH_CLI getinfo
+    $QUANTISNET_CLI getinfo
     echo
 
 }
 
 
-update_dashd(){
+update_quantisnetd(){
 
     if [ $LATEST_VERSION != $CURRENT_VERSION ] || [ ! -z "$REINSTALL" ] ; then
                     
@@ -535,11 +535,11 @@ update_dashd(){
 
         # pummel it --------------------------------------------------------------
 
-        if [ $DASHD_RUNNING == 1 ]; then
-            pending " --> ${messages["stopping"]} dashd. ${messages["please_wait"]}"
-            $DASH_CLI stop >/dev/null 2>&1
+        if [ $quantisnetd_RUNNING == 1 ]; then
+            pending " --> ${messages["stopping"]} quantisnetd. ${messages["please_wait"]}"
+            $QUANTISNET_CLI stop >/dev/null 2>&1
             sleep 15
-            killall -9 dashd dash-shutoff >/dev/null 2>&1
+            killall -9 quantisnetd dash-shutoff >/dev/null 2>&1
             ok "${messages["done"]}"
         fi
 
@@ -558,24 +558,24 @@ update_dashd(){
             netfulfilled.dat \
             peers.dat \
             sporks.dat \
-            dashd \
-            dashd-$CURRENT_VERSION \
+            quantisnetd \
+            quantisnetd-$CURRENT_VERSION \
             dash-qt \
             dash-qt-$CURRENT_VERSION \
-            dash-cli \
-            dash-cli-$CURRENT_VERSION \
+            quantisnet-cli \
+            quantisnet-cli-$CURRENT_VERSION \
             dashcore-${CURRENT_VERSION}*.gz*
         ok "${messages["done"]}"
 
         # place it ---------------------------------------------------------------
 
-        mv $TARDIR/bin/dashd dashd-$LATEST_VERSION
-        mv $TARDIR/bin/dash-cli dash-cli-$LATEST_VERSION
+        mv $TARDIR/bin/quantisnetd quantisnetd-$LATEST_VERSION
+        mv $TARDIR/bin/quantisnet-cli quantisnet-cli-$LATEST_VERSION
         if [ $PLATFORM != 'armv7l' ];then
             mv $TARDIR/bin/dash-qt dash-qt-$LATEST_VERSION
         fi
-        ln -s dashd-$LATEST_VERSION dashd
-        ln -s dash-cli-$LATEST_VERSION dash-cli
+        ln -s quantisnetd-$LATEST_VERSION quantisnetd
+        ln -s quantisnet-cli-$LATEST_VERSION quantisnet-cli
         if [ $PLATFORM != 'armv7l' ];then
             ln -s dash-qt-$LATEST_VERSION dash-qt
         fi
@@ -583,7 +583,7 @@ update_dashd(){
         # permission it ----------------------------------------------------------
 
         if [ ! -z "$SUDO_USER" ]; then
-            chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,dash-cli,dashd,dash-qt,dash*$LATEST_VERSION}
+            chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
         fi
 
         # purge it ---------------------------------------------------------------
@@ -596,23 +596,23 @@ update_dashd(){
 
         # punch it ---------------------------------------------------------------
 
-        pending " --> ${messages["launching"]} dashd... "
-        touch $INSTALL_DIR/dashd.pid
-        $INSTALL_DIR/dashd > /dev/null
+        pending " --> ${messages["launching"]} quantisnetd... "
+        touch $INSTALL_DIR/quantisnetd.pid
+        $INSTALL_DIR/quantisnetd > /dev/null
         ok "${messages["done"]}"
 
         # probe it ---------------------------------------------------------------
 
-        pending " --> ${messages["waiting_for_dashd_to_respond"]}"
+        pending " --> ${messages["waiting_for_quantisnetd_to_respond"]}"
         echo -en "${C_YELLOW}"
-        DASHD_RUNNING=1
-        while [ $DASHD_RUNNING == 1 ] && [ $DASHD_RESPONDING == 0 ]; do
+        quantisnetd_RUNNING=1
+        while [ $quantisnetd_RUNNING == 1 ] && [ $quantisnetd_RESPONDING == 0 ]; do
             echo -n "."
-            _check_dashd_state
+            _check_quantisnetd_state
             sleep 1
         done
-        if [ $DASHD_RUNNING == 0 ]; then
-            die "\n - dashd unexpectedly quit. ${messages["exiting"]}"
+        if [ $quantisnetd_RUNNING == 0 ]; then
+            die "\n - quantisnetd unexpectedly quit. ${messages["exiting"]}"
         fi
         ok "${messages["done"]}"
 
@@ -652,7 +652,7 @@ update_dashd(){
             echo -e ""
             echo -e "${C_GREEN}${messages["installed_in"]} ${INSTALL_DIR}$C_NORM"
             echo -e ""
-            ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,dash-cli,dashd,dash-qt,dash*$LATEST_VERSION}
+            ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
             echo -e ""
 
             quit
@@ -668,10 +668,10 @@ update_dashd(){
     exit 0
 }
 
-install_dashd(){
+install_quantisnetd(){
 
-    INSTALL_DIR=$HOME/.dashcore
-    DASH_CLI="$INSTALL_DIR/dash-cli"
+    INSTALL_DIR=$HOME/.quantisnetcore
+    QUANTISNET_CLI="$INSTALL_DIR/quantisnet-cli"
 
     if [ -e $INSTALL_DIR ] ; then
         die "\n - ${messages["preexisting_dir"]} $INSTALL_DIR ${messages["found"]} ${messages["run_reinstall"]} ${messages["exiting"]}"
@@ -771,11 +771,11 @@ install_dashd(){
 
     # pummel it --------------------------------------------------------------
 
-#    if [ $DASHD_RUNNING == 1 ]; then
-#        pending " --> ${messages["stopping"]} dashd. ${messages["please_wait"]}"
-#        $DASH_CLI stop >/dev/null 2>&1
+#    if [ $quantisnetd_RUNNING == 1 ]; then
+#        pending " --> ${messages["stopping"]} quantisnetd. ${messages["please_wait"]}"
+#        $QUANTISNET_CLI stop >/dev/null 2>&1
 #        sleep 15
-#        killall -9 dashd dash-shutoff >/dev/null 2>&1
+#        killall -9 quantisnetd dash-shutoff >/dev/null 2>&1
 #        ok "${messages["done"]}"
 #    fi
 
@@ -792,23 +792,23 @@ install_dashd(){
 #        mnpayments.dat \
 #        netfulfilled.dat \
 #        peers.dat \
-#        dashd \
-#        dashd-$CURRENT_VERSION \
+#        quantisnetd \
+#        quantisnetd-$CURRENT_VERSION \
 #        dash-qt \
 #        dash-qt-$CURRENT_VERSION \
-#        dash-cli \
-#        dash-cli-$CURRENT_VERSION
+#        quantisnet-cli \
+#        quantisnet-cli-$CURRENT_VERSION
 #    ok "${messages["done"]}"
 
     # place it ---------------------------------------------------------------
 
-    mv $TARDIR/bin/dashd dashd-$LATEST_VERSION
-    mv $TARDIR/bin/dash-cli dash-cli-$LATEST_VERSION
+    mv $TARDIR/bin/quantisnetd quantisnetd-$LATEST_VERSION
+    mv $TARDIR/bin/quantisnet-cli quantisnet-cli-$LATEST_VERSION
     if [ $PLATFORM != 'armv7l' ];then
         mv $TARDIR/bin/dash-qt dash-qt-$LATEST_VERSION
     fi
-    ln -s dashd-$LATEST_VERSION dashd
-    ln -s dash-cli-$LATEST_VERSION dash-cli
+    ln -s quantisnetd-$LATEST_VERSION quantisnetd
+    ln -s quantisnet-cli-$LATEST_VERSION quantisnet-cli
     if [ $PLATFORM != 'armv7l' ];then
         ln -s dash-qt-$LATEST_VERSION dash-qt
     fi
@@ -816,7 +816,7 @@ install_dashd(){
     # permission it ----------------------------------------------------------
 
     if [ ! -z "$SUDO_USER" ]; then
-        chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,dash-cli,dashd,dash-qt,dash*$LATEST_VERSION}
+        chown -h $SUDO_USER:$SUDO_USER {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
     fi
 
     # purge it ---------------------------------------------------------------
@@ -871,22 +871,22 @@ install_dashd(){
 
     # punch it ---------------------------------------------------------------
 
-    pending " --> ${messages["launching"]} dashd... "
-    $INSTALL_DIR/dashd > /dev/null
-    DASHD_RUNNING=1
+    pending " --> ${messages["launching"]} quantisnetd... "
+    $INSTALL_DIR/quantisnetd > /dev/null
+    quantisnetd_RUNNING=1
     ok "${messages["done"]}"
 
     # probe it ---------------------------------------------------------------
 
-    pending " --> ${messages["waiting_for_dashd_to_respond"]}"
+    pending " --> ${messages["waiting_for_quantisnetd_to_respond"]}"
     echo -en "${C_YELLOW}"
-    while [ $DASHD_RUNNING == 1 ] && [ $DASHD_RESPONDING == 0 ]; do
+    while [ $quantisnetd_RUNNING == 1 ] && [ $quantisnetd_RESPONDING == 0 ]; do
         echo -n "."
-        _check_dashd_state
+        _check_quantisnetd_state
         sleep 2
     done
-    if [ $DASHD_RUNNING == 0 ]; then
-        die "\n - dashd unexpectedly quit. ${messages["exiting"]}"
+    if [ $quantisnetd_RUNNING == 0 ]; then
+        die "\n - quantisnetd unexpectedly quit. ${messages["exiting"]}"
     fi
     ok "${messages["done"]}"
 
@@ -912,13 +912,13 @@ install_dashd(){
         echo -e ""
         echo -e "${C_GREEN}${messages["installed_in"]} ${INSTALL_DIR}$C_NORM"
         echo -e ""
-        ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,dash-cli,dashd,dash-qt,dash*$LATEST_VERSION}
+        ls -l --color {$DOWNLOAD_FILE,${DOWNLOAD_FILE}.DIGESTS.txt,quantisnet-cli,quantisnetd,dash-qt,dash*$LATEST_VERSION}
         echo -e ""
 
         if [ ! -z "$SUDO_USER" ]; then
             echo -e "${C_GREEN}Symlinked to: ${LINK_TO_SYSTEM_DIR}$C_NORM"
             echo -e ""
-            ls -l --color $LINK_TO_SYSTEM_DIR/{dashd,dash-cli}
+            ls -l --color $LINK_TO_SYSTEM_DIR/{quantisnetd,quantisnet-cli}
             echo -e ""
         fi
 
@@ -929,40 +929,40 @@ install_dashd(){
 
 }
 
-_get_dashd_proc_status(){
-    DASHD_HASPID=0
-    if [ -e $INSTALL_DIR/dashd.pid ] ; then
-        DASHD_HASPID=`ps --no-header \`cat $INSTALL_DIR/dashd.pid 2>/dev/null\` | wc -l`;
+_get_quantisnetd_proc_status(){
+    quantisnetd_HASPID=0
+    if [ -e $INSTALL_DIR/quantisnetd.pid ] ; then
+        quantisnetd_HASPID=`ps --no-header \`cat $INSTALL_DIR/quantisnetd.pid 2>/dev/null\` | wc -l`;
     else
-        DASHD_HASPID=$(pidof dashd)
+        quantisnetd_HASPID=$(pidof quantisnetd)
         if [ $? -gt 0 ]; then
-            DASHD_HASPID=0
+            quantisnetd_HASPID=0
         fi
     fi
-    DASHD_PID=$(pidof dashd)
+    quantisnetd_PID=$(pidof quantisnetd)
 }
 
-get_dashd_status(){
+get_quantisnetd_status(){
 
-    _get_dashd_proc_status
+    _get_quantisnetd_proc_status
 
-    DASHD_UPTIME=$(ps -p $DASHD_PID -o etime= 2>/dev/null | sed -e 's/ //g')
-    DASHD_UPTIME_TIMES=$(echo "$DASHD_UPTIME" | perl -ne 'chomp ; s/-/:/ ; print join ":", reverse split /:/' 2>/dev/null )
-    DASHD_UPTIME_SECS=$( echo "$DASHD_UPTIME_TIMES" | cut -d: -f1 )
-    DASHD_UPTIME_MINS=$( echo "$DASHD_UPTIME_TIMES" | cut -d: -f2 )
-    DASHD_UPTIME_HOURS=$( echo "$DASHD_UPTIME_TIMES" | cut -d: -f3 )
-    DASHD_UPTIME_DAYS=$( echo "$DASHD_UPTIME_TIMES" | cut -d: -f4 )
-    if [ -z "$DASHD_UPTIME_DAYS" ]; then DASHD_UPTIME_DAYS=0 ; fi
-    if [ -z "$DASHD_UPTIME_HOURS" ]; then DASHD_UPTIME_HOURS=0 ; fi
-    if [ -z "$DASHD_UPTIME_MINS" ]; then DASHD_UPTIME_MINS=0 ; fi
-    if [ -z "$DASHD_UPTIME_SECS" ]; then DASHD_UPTIME_SECS=0 ; fi
+    quantisnetd_UPTIME=$(ps -p $quantisnetd_PID -o etime= 2>/dev/null | sed -e 's/ //g')
+    quantisnetd_UPTIME_TIMES=$(echo "$quantisnetd_UPTIME" | perl -ne 'chomp ; s/-/:/ ; print join ":", reverse split /:/' 2>/dev/null )
+    quantisnetd_UPTIME_SECS=$( echo "$quantisnetd_UPTIME_TIMES" | cut -d: -f1 )
+    quantisnetd_UPTIME_MINS=$( echo "$quantisnetd_UPTIME_TIMES" | cut -d: -f2 )
+    quantisnetd_UPTIME_HOURS=$( echo "$quantisnetd_UPTIME_TIMES" | cut -d: -f3 )
+    quantisnetd_UPTIME_DAYS=$( echo "$quantisnetd_UPTIME_TIMES" | cut -d: -f4 )
+    if [ -z "$quantisnetd_UPTIME_DAYS" ]; then quantisnetd_UPTIME_DAYS=0 ; fi
+    if [ -z "$quantisnetd_UPTIME_HOURS" ]; then quantisnetd_UPTIME_HOURS=0 ; fi
+    if [ -z "$quantisnetd_UPTIME_MINS" ]; then quantisnetd_UPTIME_MINS=0 ; fi
+    if [ -z "$quantisnetd_UPTIME_SECS" ]; then quantisnetd_UPTIME_SECS=0 ; fi
 
-    DASHD_LISTENING=`netstat -nat | grep LIST | grep 9999 | wc -l`;
-    DASHD_CONNECTIONS=`netstat -nat | grep ESTA | grep 9999 | wc -l`;
-    DASHD_CURRENT_BLOCK=`$DASH_CLI getblockcount 2>/dev/null`
-    if [ -z "$DASHD_CURRENT_BLOCK" ] ; then DASHD_CURRENT_BLOCK=0 ; fi
-    DASHD_GETINFO=`$DASH_CLI getinfo 2>/dev/null`;
-    DASHD_DIFFICULTY=$(echo "$DASHD_GETINFO" | grep difficulty | awk '{print $2}' | sed -e 's/[",]//g')
+    quantisnetd_LISTENING=`netstat -nat | grep LIST | grep 9999 | wc -l`;
+    quantisnetd_CONNECTIONS=`netstat -nat | grep ESTA | grep 9999 | wc -l`;
+    quantisnetd_CURRENT_BLOCK=`$QUANTISNET_CLI getblockcount 2>/dev/null`
+    if [ -z "$quantisnetd_CURRENT_BLOCK" ] ; then quantisnetd_CURRENT_BLOCK=0 ; fi
+    quantisnetd_GETINFO=`$QUANTISNET_CLI getinfo 2>/dev/null`;
+    quantisnetd_DIFFICULTY=$(echo "$quantisnetd_GETINFO" | grep difficulty | awk '{print $2}' | sed -e 's/[",]//g')
 
     WEB_BLOCK_COUNT_CHAINZ=`$curl_cmd https://chainz.cryptoid.info/dash/api.dws?q=getblockcount`;
     if [ -z "$WEB_BLOCK_COUNT_CHAINZ" ]; then
@@ -994,17 +994,17 @@ get_dashd_status(){
 
     CHECK_SYNC_AGAINST_HEIGHT=$(echo "$WEB_BLOCK_COUNT_CHAINZ $WEB_BLOCK_COUNT_ME $WEB_BLOCK_COUNT_DQA $WEB_BLOCK_COUNT_DWHALE" | tr " " "\n" | sort -rn | head -1)
 
-    DASHD_SYNCED=0
-    if [ $CHECK_SYNC_AGAINST_HEIGHT -ge $DASHD_CURRENT_BLOCK ] && [ $(($CHECK_SYNC_AGAINST_HEIGHT - 5)) -lt $DASHD_CURRENT_BLOCK ];then
-        DASHD_SYNCED=1
+    quantisnetd_SYNCED=0
+    if [ $CHECK_SYNC_AGAINST_HEIGHT -ge $quantisnetd_CURRENT_BLOCK ] && [ $(($CHECK_SYNC_AGAINST_HEIGHT - 5)) -lt $quantisnetd_CURRENT_BLOCK ];then
+        quantisnetd_SYNCED=1
     fi
 
-    DASHD_CONNECTED=0
-    if [ $DASHD_CONNECTIONS -gt 0 ]; then DASHD_CONNECTED=1 ; fi
+    quantisnetd_CONNECTED=0
+    if [ $quantisnetd_CONNECTIONS -gt 0 ]; then quantisnetd_CONNECTED=1 ; fi
 
-    DASHD_UP_TO_DATE=0
+    quantisnetd_UP_TO_DATE=0
     if [ $LATEST_VERSION == $CURRENT_VERSION ]; then
-        DASHD_UP_TO_DATE=1
+        quantisnetd_UP_TO_DATE=1
     fi
 
     get_public_ips
@@ -1022,7 +1022,7 @@ get_dashd_status(){
 
     # masternode (remote!) specific
 
-    MN_PROTX_RAW="$($DASH_CLI protx list valid 1 2>&1)"
+    MN_PROTX_RAW="$($QUANTISNET_CLI protx list valid 1 2>&1)"
     MN_PROTX_RECORD=`echo "$MN_PROTX_RAW" | grep -w -B6 -A19 $MASTERNODE_BIND_IP:9999 | sed -e 's/:9999/~9999/' -e 's/[":,{}]//g' -e 's/^ \+//' -e 's/ \+$//' -e 's/~9999/:9999/' -e '/^$/d' -e '/^[^ ]\+$/d'`
     MN_PROTX_QUEUE=`echo "$MN_PROTX_RAW" | egrep '(proTxHash|lastPaidHeight|PoSeRevivedHeight|registeredHeight)' | sed -e 's/[":,{}]//g' -e 's/^ \+//' -e 's/ \+$//' -e '/^$/d' -e '/^[^ ]\+$/d' | sed -e 'N;s/\n/ /' | sed -e 'N;s/\n/ /' | awk ' \
 {
@@ -1058,7 +1058,7 @@ get_dashd_status(){
     MN_PROTX_SERVICE_VALID=0
 
     MN_CONF_ENABLED=$( egrep -s '^[^#]*\s*masternode\s*=\s*1' $HOME/.dash{,core}/dash.conf | wc -l 2>/dev/null)
-    #MN_STARTED=`$DASH_CLI masternode status 2>&1 | grep 'successfully started' | wc -l`
+    #MN_STARTED=`$QUANTISNET_CLI masternode status 2>&1 | grep 'successfully started' | wc -l`
     MN_REGISTERED=0
     [[ -z "$MN_PROTX_RECORD" ]] || MN_REGISTERED=1
 
@@ -1094,7 +1094,7 @@ get_dashd_status(){
 
 
     NOW=`date +%s`
-    MN_LIST="$(cache_output /tmp/mnlist_cache '$DASH_CLI masternodelist full 2>/dev/null')"
+    MN_LIST="$(cache_output /tmp/mnlist_cache '$QUANTISNET_CLI masternodelist full 2>/dev/null')"
 
     MN_STATUS=$( grep $MASTERNODE_BIND_IP /tmp/mnlist_cache | sed -e 's/"//g' | awk '{print $2}' )
     MN_VISIBLE=$( test "$MN_STATUS" && echo 1 || echo 0 )
@@ -1102,7 +1102,7 @@ get_dashd_status(){
     MN_UNHEALTHY=$( cat /tmp/mnlist_cache | grep -c EXPIRED )
     MN_TOTAL=$(( $MN_ENABLED + $MN_UNHEALTHY ))
 
-    MN_SYNC_STATUS=$( $DASH_CLI mnsync status )
+    MN_SYNC_STATUS=$( $QUANTISNET_CLI mnsync status )
     MN_SYNC_ASSET=$(echo "$MN_SYNC_STATUS" | grep 'AssetName' | awk '{print $2}' | sed -e 's/[",]//g' )
     MN_SYNC_COMPLETE=$(echo "$MN_SYNC_STATUS" | grep 'IsSynced' | grep 'true' | wc -l)
 
@@ -1205,28 +1205,28 @@ get_host_status(){
 
 print_status() {
 
-    DASHD_UPTIME_STRING="$DASHD_UPTIME_DAYS ${messages["days"]}, $DASHD_UPTIME_HOURS ${messages["hours"]}, $DASHD_UPTIME_MINS ${messages["mins"]}, $DASHD_UPTIME_SECS ${messages["secs"]}"
+    quantisnetd_UPTIME_STRING="$quantisnetd_UPTIME_DAYS ${messages["days"]}, $quantisnetd_UPTIME_HOURS ${messages["hours"]}, $quantisnetd_UPTIME_MINS ${messages["mins"]}, $quantisnetd_UPTIME_SECS ${messages["secs"]}"
 
     pending "${messages["status_hostnam"]}" ; ok "$HOSTNAME"
     pending "${messages["status_uptimeh"]}" ; ok "$HOST_UPTIME_DAYS ${messages["days"]}, $HOST_LOAD_AVERAGE"
-    pending "${messages["status_dashdip"]}" ; [ $MASTERNODE_BIND_IP != 'none' ] && ok "$MASTERNODE_BIND_IP" || err "$MASTERNODE_BIND_IP"
-    pending "${messages["status_dashdve"]}" ; ok "$CURRENT_VERSION"
-    pending "${messages["status_uptodat"]}" ; [ $DASHD_UP_TO_DATE -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_running"]}" ; [ $DASHD_HASPID     -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_uptimed"]}" ; [ $DASHD_RUNNING    -gt 0 ] && ok "$DASHD_UPTIME_STRING" || err "$DASHD_UPTIME_STRING"
-    pending "${messages["status_drespon"]}" ; [ $DASHD_RUNNING    -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_dlisten"]}" ; [ $DASHD_LISTENING  -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_dconnec"]}" ; [ $DASHD_CONNECTED  -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_quantisnetdip"]}" ; [ $MASTERNODE_BIND_IP != 'none' ] && ok "$MASTERNODE_BIND_IP" || err "$MASTERNODE_BIND_IP"
+    pending "${messages["status_quantisnetdve"]}" ; ok "$CURRENT_VERSION"
+    pending "${messages["status_uptodat"]}" ; [ $quantisnetd_UP_TO_DATE -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_running"]}" ; [ $quantisnetd_HASPID     -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_uptimed"]}" ; [ $quantisnetd_RUNNING    -gt 0 ] && ok "$quantisnetd_UPTIME_STRING" || err "$quantisnetd_UPTIME_STRING"
+    pending "${messages["status_drespon"]}" ; [ $quantisnetd_RUNNING    -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_dlisten"]}" ; [ $quantisnetd_LISTENING  -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_dconnec"]}" ; [ $quantisnetd_CONNECTED  -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
     pending "${messages["status_dportop"]}" ; [ $PUBLIC_PORT_CLOSED  -lt 1 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_dconcnt"]}" ; [ $DASHD_CONNECTIONS   -gt 0 ] && ok "$DASHD_CONNECTIONS" || err "$DASHD_CONNECTIONS"
-    pending "${messages["status_dblsync"]}" ; [ $DASHD_SYNCED     -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
-    pending "${messages["status_dbllast"]}" ; [ $DASHD_SYNCED     -gt 0 ] && ok "$DASHD_CURRENT_BLOCK" || err "$DASHD_CURRENT_BLOCK"
+    pending "${messages["status_dconcnt"]}" ; [ $quantisnetd_CONNECTIONS   -gt 0 ] && ok "$quantisnetd_CONNECTIONS" || err "$quantisnetd_CONNECTIONS"
+    pending "${messages["status_dblsync"]}" ; [ $quantisnetd_SYNCED     -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
+    pending "${messages["status_dbllast"]}" ; [ $quantisnetd_SYNCED     -gt 0 ] && ok "$quantisnetd_CURRENT_BLOCK" || err "$quantisnetd_CURRENT_BLOCK"
     pending "${messages["status_webchai"]}" ; [ $WEB_BLOCK_COUNT_CHAINZ -gt 0 ] && ok "$WEB_BLOCK_COUNT_CHAINZ" || err "$WEB_BLOCK_COUNT_CHAINZ"
     pending "${messages["status_webdark"]}" ; [ $WEB_BLOCK_COUNT_DQA    -gt 0 ] && ok "$WEB_BLOCK_COUNT_DQA" || err "$WEB_BLOCK_COUNT_DQA"
     pending "${messages["status_webdash"]}" ; [ $WEB_BLOCK_COUNT_DWHALE -gt 0 ] && ok "$WEB_BLOCK_COUNT_DWHALE" || err "$WEB_BLOCK_COUNT_DWHALE"
     pending "${messages["status_webmast"]}" ; [ $WEB_ME_FORK_DETECT -gt 0 ] && err "$WEB_ME" || ok "$WEB_ME"
-    pending "${messages["status_dcurdif"]}" ; ok "$DASHD_DIFFICULTY"
-    if [ $DASHD_RUNNING -gt 0 ] && [ $MN_CONF_ENABLED -gt 0 ] ; then
+    pending "${messages["status_dcurdif"]}" ; ok "$quantisnetd_DIFFICULTY"
+    if [ $quantisnetd_RUNNING -gt 0 ] && [ $MN_CONF_ENABLED -gt 0 ] ; then
     #pending "${messages["status_mnstart"]}" ; [ $MN_STARTED -gt 0  ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
     pending "${messages["status_mnregis"]}" ; [ $MN_REGISTERED -gt 0 ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
     pending "${messages["status_mnvislo"]}" ; [ $MN_VISIBLE -gt 0  ] && ok "${messages["YES"]}" || err "${messages["NO"]}"
@@ -1278,7 +1278,7 @@ show_message_configure() {
     ok "${messages["to_enable_masternode"]}"
     ok "${messages["uncomment_conf_lines"]}"
     echo
-         pending "    $HOME/.dashcore/dash.conf" ; echo
+         pending "    $HOME/.quantisnetcore/dash.conf" ; echo
     echo
     echo -e "$C_GREEN install sentinel$C_NORM"
     echo
